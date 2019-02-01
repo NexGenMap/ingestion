@@ -212,16 +212,18 @@ def ScanAndIngest():
             # except:
             #     # print 'Skipping %s: missing TIFF file' % filename
             #     continue
+            try:
+                manifest = BuildIngestManifest(fname, xml_blob, directory)
+                task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
+                # print 'Ingesting %s as task %s' % (fname, task['id'], str(count))
+                print 'Ingesting...'
+                if count == MAX_IMAGES_TO_INGEST_PER_RUN:
+                    print 'Stopping after ingesting %s images.' % count
+                    break
+                count = count + 1
+            except:
+                print 'error!'
 
-            manifest = BuildIngestManifest(fname, xml_blob, directory)
-            task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
-            # print 'Ingesting %s as task %s' % (fname, task['id'], str(count))
-            print 'Ingesting...'
-
-            if count == MAX_IMAGES_TO_INGEST_PER_RUN:
-                print 'Stopping after ingesting %s images.' % count
-                break
-            count = count + 1
 
 
 if __name__ == '__main__':
