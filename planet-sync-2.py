@@ -189,15 +189,16 @@ def ScanAndIngest():
         # _, asset_id = os.path.split(directory)
 
         # if asset_id in existing_asset_ids:
-        if filename in existing_asset_ids:
-            print 'Skipping %s: already ingested' % filename
-            continue
 
         _, file_extension = os.path.splitext(blob.name)
         # print file_extension
         print directory, filename
         fname, _ = os.path.splitext(filename)
         
+        if fname in existing_asset_ids:
+            print 'Skipping %s: already ingested' % fname
+            continue
+
         if file_extension == XML_EXT:
             xml_blob = blob
             # try:
