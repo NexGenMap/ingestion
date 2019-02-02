@@ -129,12 +129,15 @@ def GetBlobsInBucketByDirectory(bucket_id, prefix=None, ignore=None):
     return blob_dict
 
 
-def BuildIngestManifest(asset_id, xml_blob, path):
+def BuildIngestManifest(asset_id, xml_blob, path, tile):
     """Builds an ingestion manifest for an asset given XML and TIF blobs."""
     xml = xml_blob.download_as_string()
     root = ET.parse(StringIO(xml)).getroot()
 
-    metadata = {}
+    metadata = {
+        'tile': tile
+    }
+
     for specifier, name, parser in METADATA_SPECS:
         element = root.find(specifier, XML_NAMESPACES)
         metadata[name] = parser(element.text)
@@ -143,7 +146,7 @@ def BuildIngestManifest(asset_id, xml_blob, path):
     time_string = root.find(XML_METADATA_TIME_SPEC, XML_NAMESPACES).text
 
     j = {
-        'name': os.path.join(EE_RESOURCE_NAME_PREFIX, EE_COLLECTION, asset_id),
+        'name': os.path.join(EE_RESOURCE_NAME_PREFIX, EE_COLLECTION, tile + '_' + asset_id),
         # "name": os.path.join(EE_COLLECTION, asset_id),
         "tilesets": [{
             "sources": [{
@@ -171,7 +174,7 @@ def ScanAndIngest():
 
     print 'Scanning for available assets...'
     # blobs_by_directory = GetBlobsInBucketByDirectory(
-        # GCS_BUCKET, GCS_PREFIX, GCS_IGNORE)
+    # GCS_BUCKET, GCS_PREFIX, GCS_IGNORE)
     # print 'Found %s available assets.' % len(blobs_by_directory)
 
     bucket = storage.Client().get_bucket(GCS_BUCKET)
@@ -191,12 +194,13 @@ def ScanAndIngest():
         # if asset_id in existing_asset_ids:
 
         _, file_extension = os.path.splitext(blob.name)
-        # print file_extension
-        print directory, filename
+
         fname, _ = os.path.splitext(filename)
-        
-        if fname in existing_asset_ids:
-            print 'Skipping %s: already ingested' % fname
+
+        tile = directory.split('/')[1]
+
+        if tile +'_'+ fname in existing_asset_ids:
+            print 'Skipping %s: already ingested' % tile + '_' + fname
             continue
 
         if file_extension == XML_EXT:
@@ -213,17 +217,18 @@ def ScanAndIngest():
             #     # print 'Skipping %s: missing TIFF file' % filename
             #     continue
             try:
-                manifest = BuildIngestManifest(fname, xml_blob, directory)
+                manifest = BuildIngestManifest(
+                    fname, xml_blob, directory, tile)
                 task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
                 # print 'Ingesting %s as task %s' % (fname, task['id'], str(count))
-                print 'Ingesting...'
+                print fname
+                print 'Ingesting %s...' % fname
                 if count == MAX_IMAGES_TO_INGEST_PER_RUN:
                     print 'Stopping after ingesting %s images.' % count
                     break
                 count = count + 1
             except:
                 print 'error!'
-
 
 
 if __name__ == '__main__':
