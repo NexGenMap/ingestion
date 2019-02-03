@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 from pprint import pprint
 import json
 import sys
-sys.path.append(os.path.abspath('gee_toolbox/'))
+sys.path.append(os.path.abspath('./gee_toolbox'))
 import gee as gee_toolbox
 
 # The location of the input data in Google Cloud Storage.
