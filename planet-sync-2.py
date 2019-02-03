@@ -10,6 +10,8 @@ import time
 import xml.etree.ElementTree as ET
 from pprint import pprint
 import json
+sys.path.append(os.path.abspath('../gee_toolbox'))
+import gee as gee_toolbox
 
 # The location of the input data in Google Cloud Storage.
 GCS_BUCKET = 'sistema_alertas_sccon'
@@ -32,6 +34,14 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 # The filename extensions for the TIF and corresponding XML files in Cloud Storage.
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
+
+JSONFILE = 'grids.geojson'
+
+ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
+            'mapbiomas3', 'mapbiomas4',
+            'mapbiomas5', 'mapbiomas6',
+            'mapbiomas7', 'mapbiomas8',
+            'mapbiomas9', 'mapbiomas10']
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -66,6 +76,23 @@ METADATA_SPECS = [
 
 # The XML spec for the property containing the image acquisition / start time.
 XML_METADATA_TIME_SPEC = './/ps:acquisitionDateTime'
+
+
+def getTiles(jsonFile, account=1):
+    """Get tiles by account"""
+
+    with open(jsonFile) as f:
+        jsonData = json.load(f)
+
+    features = jsonData['features']
+
+    filtered = filter(
+        lambda feature: feature['properties']['account'] == account, features)
+
+    tiles = map(
+        lambda feature: feature['properties']['PageNumber'], filtered)
+
+    return tiles
 
 
 def TimestampToSeconds(iso_time_string):
@@ -107,7 +134,7 @@ def GetBlobsInBucketByDirectory(bucket_id, prefix=None, ignore=None):
 
     Scans the contents of a Cloud Storage bucket and returns an index of the
     blobs that are present, grouped by the parent directory name, as a
-    dictionary of dictionaries of Blob ojbects.
+    dictionary of dictionaries of Blob objects.
 
     Args:
     bucket_id: The id of the Cloud Storage bucket to list.
@@ -131,6 +158,7 @@ def GetBlobsInBucketByDirectory(bucket_id, prefix=None, ignore=None):
 
 def BuildIngestManifest(asset_id, xml_blob, path, tile):
     """Builds an ingestion manifest for an asset given XML and TIF blobs."""
+
     xml = xml_blob.download_as_string()
     root = ET.parse(StringIO(xml)).getroot()
 
@@ -145,15 +173,13 @@ def BuildIngestManifest(asset_id, xml_blob, path, tile):
     tif_uri = "gs://%s/%s/%s_cut.tif" % (GCS_BUCKET, path, asset_id)
     time_string = root.find(XML_METADATA_TIME_SPEC, XML_NAMESPACES).text
 
-    j = {
+    return {
         'name': os.path.join(EE_RESOURCE_NAME_PREFIX, EE_COLLECTION, tile + '_' + asset_id),
-        # "name": os.path.join(EE_COLLECTION, asset_id),
         "tilesets": [{
             "sources": [{
                 "uris": [tif_uri],
             }],
         }],
-        # "pyramidingPolicy": "MEAN",
         "bands": [{"id": bid, "tileset_band_index": index} for (index, bid) in enumerate(BAND_NAMES)],
         "properties": metadata,
         "start_time": {
@@ -161,12 +187,8 @@ def BuildIngestManifest(asset_id, xml_blob, path, tile):
         },
     }
 
-    # pprint(j)
 
-    return j
-
-
-def ScanAndIngest():
+def ScanAndIngest(tiles):
     """Scans for and ingests all available images."""
     print 'Scanning for existing assets...'
 
@@ -197,24 +219,36 @@ def ScanAndIngest():
             continue
 
         if file_extension == XML_EXT:
-            try:
-                manifest = BuildIngestManifest(fname, blob, directory, tile)
+            if int(tile) in tiles:
+                try:
+                    manifest = BuildIngestManifest(fname, blob, directory, tile)
 
-                task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
+                    task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
 
-                print '[%s] Ingesting %s...' % count, fname
+                    print '[%s] Ingesting %s...' % count, fname
 
-                if count == MAX_IMAGES_TO_INGEST_PER_RUN:
-                    print 'Stopping after ingesting %s images.' % count
-                    break
-                count = count + 1
-            except:
-                print 'error!'
+                    if count == MAX_IMAGES_TO_INGEST_PER_RUN:
+                        print 'Stopping after ingesting %s images.' % count
+                        break
+                    count = count + 1
+                except:
+                    print 'error!'
 
 
 if __name__ == '__main__':
     print 'Initializing...'
     # ee.Initialize(GoogleCredentials.get_application_default(),
     #               use_cloud_api=True)
-    ee.Initialize(use_cloud_api=True)
-    ScanAndIngest()
+    
+    for i in range(len(ACCOUNTS)):
+        
+        gee_toolbox.switch_user(ACCOUNTS[i])
+        gee_toolbox.init()
+
+        ee.Initialize(use_cloud_api=True)
+
+        jsonFileName = os.path.join(os.getcwd(), JSONFILE)
+
+        tiles = getTiles(jsonFileName, i+1)
+
+        ScanAndIngest(tiles)
