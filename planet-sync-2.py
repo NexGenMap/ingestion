@@ -250,6 +250,8 @@ if __name__ == '__main__':
 
             gee_toolbox.switch_user(ACCOUNTS[i])
             # gee_toolbox.init()
+            
+            time.sleep(2)
 
             ee.Initialize(use_cloud_api=True)
 
