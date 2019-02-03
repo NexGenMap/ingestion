@@ -230,8 +230,8 @@ def ScanAndIngest(tiles, account):
                     task = ee.data.startIngestion(
                         ee.data.newTaskId()[0], manifest)
 
-                    print '[%s] %s ingesting %s | status: %s...' % (
-                        count, account, fname, task['status'])
+                    print '[%s] %s ingesting %s...' % (count, account, fname)
+                    print task
 
                     if count == MAX_IMAGES_TO_INGEST_PER_RUN:
                         print 'Stopping after ingesting %s images.' % count
