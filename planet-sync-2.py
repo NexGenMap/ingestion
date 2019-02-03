@@ -169,29 +169,22 @@ def BuildIngestManifest(asset_id, xml_blob, path, tile):
 def ScanAndIngest():
     """Scans for and ingests all available images."""
     print 'Scanning for existing assets...'
+
     existing_asset_ids = GetExistingAssetIds(EE_COLLECTION)
     print 'Found %s existing assets.' % len(existing_asset_ids)
 
     print 'Scanning for available assets...'
-    # blobs_by_directory = GetBlobsInBucketByDirectory(
-    # GCS_BUCKET, GCS_PREFIX, GCS_IGNORE)
-    # print 'Found %s available assets.' % len(blobs_by_directory)
 
     bucket = storage.Client().get_bucket(GCS_BUCKET)
     blobs = bucket.list_blobs(prefix=GCS_PREFIX)
 
     count = 1
     for blob in blobs:
-        # print blob
+
         directory, filename = os.path.split(blob.name)
+
         if GCS_IGNORE and filename in GCS_IGNORE:
             continue
-        # blob_dict[directory][filename] = blob
-
-    # for directory, blobs in blobs_by_directory.iteritems():
-        # _, asset_id = os.path.split(directory)
-
-        # if asset_id in existing_asset_ids:
 
         _, file_extension = os.path.splitext(blob.name)
 
@@ -199,30 +192,18 @@ def ScanAndIngest():
 
         tile = directory.split('/')[1]
 
-        if tile +'_'+ fname in existing_asset_ids:
+        if tile + '_' + fname in existing_asset_ids:
             print 'Skipping %s: already ingested' % tile + '_' + fname
             continue
 
         if file_extension == XML_EXT:
-            xml_blob = blob
-            # try:
-            #     xml_blob = blobs[blob.name + XML_EXT]
-            # except:
-            #     print 'Skipping %s: missing XML file' % blob.name
-            #     continue
-
-            # try:
-            #     tif_blob = blobs[blob.name + TIF_EXT]
-            # except:
-            #     # print 'Skipping %s: missing TIFF file' % filename
-            #     continue
             try:
-                manifest = BuildIngestManifest(
-                    fname, xml_blob, directory, tile)
+                manifest = BuildIngestManifest(fname, blob, directory, tile)
+
                 task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
-                # print 'Ingesting %s as task %s' % (fname, task['id'], str(count))
-                print fname
-                print 'Ingesting %s...' % fname
+
+                print '[%s] Ingesting %s...' % count, fname
+
                 if count == MAX_IMAGES_TO_INGEST_PER_RUN:
                     print 'Stopping after ingesting %s images.' % count
                     break
