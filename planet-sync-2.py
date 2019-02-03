@@ -232,16 +232,15 @@ def ScanAndIngest(tiles):
                         print 'Stopping after ingesting %s images.' % count
                         break
                     count = count + 1
-                except:
-                    print 'error!'
+                except Exception as e:
+                    print 'error!', e
 
 
 if __name__ == '__main__':
     print 'Initializing...'
-    # ee.Initialize(GoogleCredentials.get_application_default(),
-    #               use_cloud_api=True)
-    gee_toolbox.init()
     
+    gee_toolbox.init()
+
     for i in range(len(ACCOUNTS)):
         
         gee_toolbox.switch_user(ACCOUNTS[i])
