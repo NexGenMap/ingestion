@@ -29,7 +29,7 @@ EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 EE_RESOURCE_NAME_PREFIX = 'projects/earthengine-legacy/assets'
 
 # The maximum number of images to try to ingest per run.
-MAX_IMAGES_TO_INGEST_PER_RUN = 3000
+MAX_IMAGES_TO_INGEST_PER_RUN = 500
 
 # The names to use for the ingested bands in Earth Engine.
 BAND_NAMES = ['B', 'G', 'R', 'N']
@@ -260,4 +260,4 @@ if __name__ == '__main__':
             ScanAndIngest(tiles, ACCOUNTS[i])
 
         print "Nap time! I'll be back in 1 hour. See you!"
-        time.sleep(3600)
+        time.sleep(60)
