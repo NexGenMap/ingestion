@@ -26,8 +26,9 @@ def init(user=None):
     sa=os.environ.get('SERVICE_ACCOUNT')
     if sa:
         _out('init','SERVICE_ACCOUNT ({})'.format(sa))
-        ee.Initialize(ee.ServiceAccountCredentials(
-            sa, PEM_PATH), use_cloud_api=True)
+        # ee.Initialize(ee.ServiceAccountCredentials(
+        #     sa, PEM_PATH), use_cloud_api=True)
+        ee.Initialize(use_cloud_api=True)
     else:
         if user: user_str='({})'.format(user)
         else: user_str=''
