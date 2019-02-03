@@ -40,11 +40,11 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-1.geojson'
 
-ACCOUNTS = ['mapbiomas2',
-            'mapbiomas3', 'mapbiomas4',
+ACCOUNTS = ['mapbiomas3', 'mapbiomas10'
+            'mapbiomas2', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
             'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas1', 'mapbiomas10']
+            'mapbiomas9', 'mapbiomas1']
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -230,7 +230,8 @@ def ScanAndIngest(tiles, account):
                     task = ee.data.startIngestion(
                         ee.data.newTaskId()[0], manifest)
 
-                    print '[%s] %s ingesting %s...' % (count, account, fname)
+                    print '[%s] %s ingesting %s | status: %s...' % (
+                        count, account, fname, task['status'])
 
                     if count == MAX_IMAGES_TO_INGEST_PER_RUN:
                         print 'Stopping after ingesting %s images.' % count
