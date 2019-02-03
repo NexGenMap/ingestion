@@ -13,6 +13,8 @@ import json
 import sys
 sys.path.append(os.path.abspath('./gee_toolbox'))
 import gee as gee_toolbox
+import time
+
 
 # The location of the input data in Google Cloud Storage.
 GCS_BUCKET = 'sistema_alertas_sccon'
@@ -27,7 +29,7 @@ EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 EE_RESOURCE_NAME_PREFIX = 'projects/earthengine-legacy/assets'
 
 # The maximum number of images to try to ingest per run.
-MAX_IMAGES_TO_INGEST_PER_RUN = 5000
+MAX_IMAGES_TO_INGEST_PER_RUN = 3000
 
 # The names to use for the ingested bands in Earth Engine.
 BAND_NAMES = ['B', 'G', 'R', 'N']
@@ -214,7 +216,7 @@ def ScanAndIngest(tiles):
         fname, _ = os.path.splitext(filename)
 
         tile = directory.split('/')[1]
-        
+
         if tile + '_' + fname in existing_asset_ids:
             print 'Skipping %s: already ingested' % (tile + '_' + fname)
             continue
@@ -222,9 +224,11 @@ def ScanAndIngest(tiles):
         if file_extension == XML_EXT:
             if tile in tiles:
                 try:
-                    manifest = BuildIngestManifest(fname, blob, directory, tile)
+                    manifest = BuildIngestManifest(
+                        fname, blob, directory, tile)
 
-                    task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
+                    task = ee.data.startIngestion(
+                        ee.data.newTaskId()[0], manifest)
 
                     print '[%s] Ingesting %s...' % (count, fname)
 
@@ -237,19 +241,23 @@ def ScanAndIngest(tiles):
 
 
 if __name__ == '__main__':
-    print 'Initializing...'
-    
-    gee_toolbox.init()
+    while True:
+        print 'Initializing...'
 
-    for i in range(len(ACCOUNTS)):
-        
-        gee_toolbox.switch_user(ACCOUNTS[i])
         gee_toolbox.init()
 
-        ee.Initialize(use_cloud_api=True)
+        for i in range(len(ACCOUNTS)):
 
-        jsonFileName = os.path.join(os.getcwd(), JSONFILE)
+            gee_toolbox.switch_user(ACCOUNTS[i])
+            gee_toolbox.init()
 
-        tiles = getTiles(jsonFileName, i+1)
+            ee.Initialize(use_cloud_api=True)
 
-        ScanAndIngest(tiles)
+            jsonFileName = os.path.join(os.getcwd(), JSONFILE)
+
+            tiles = getTiles(jsonFileName, i+1)
+
+            ScanAndIngest(tiles)
+
+        print "Nap time! I'll be back in 1 hour. See you!"
+        time.sleep(3600)
