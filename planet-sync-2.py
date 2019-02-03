@@ -40,11 +40,11 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-1.geojson'
 
-ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
+ACCOUNTS = ['mapbiomas10', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
             'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas10']
+            'mapbiomas9', 'mapbiomas1']
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
