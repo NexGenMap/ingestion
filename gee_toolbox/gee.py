@@ -26,12 +26,13 @@ def init(user=None):
     sa=os.environ.get('SERVICE_ACCOUNT')
     if sa:
         _out('init','SERVICE_ACCOUNT ({})'.format(sa))
-        ee.Initialize(ee.ServiceAccountCredentials(sa,PEM_PATH))
+        ee.Initialize(ee.ServiceAccountCredentials(
+            sa, PEM_PATH), use_cloud_api=True)
     else:
         if user: user_str='({})'.format(user)
         else: user_str=''
         _out('init','USER_ACCOUNT {}'.format(user_str))
-        ee.Initialize()
+        ee.Initialize(use_cloud_api=True)
 
 
 def current_user(state='CURRENT'):
