@@ -91,7 +91,7 @@ def getTiles(jsonFile, account=1):
         lambda feature: feature['properties']['account'] == account, features)
 
     tiles = map(
-        lambda feature: feature['properties']['PageNumber'], filtered)
+        lambda feature: str(feature['properties']['PageNumber']), filtered)
 
     return tiles
 
@@ -214,19 +214,19 @@ def ScanAndIngest(tiles):
         fname, _ = os.path.splitext(filename)
 
         tile = directory.split('/')[1]
-
+        
         if tile + '_' + fname in existing_asset_ids:
-            print 'Skipping %s: already ingested' % tile + '_' + fname
+            print 'Skipping %s: already ingested' % (tile + '_' + fname)
             continue
 
         if file_extension == XML_EXT:
-            if int(tile) in tiles:
+            if tile in tiles:
                 try:
                     manifest = BuildIngestManifest(fname, blob, directory, tile)
 
                     task = ee.data.startIngestion(ee.data.newTaskId()[0], manifest)
 
-                    print '[%s] Ingesting %s...' % count, fname
+                    print '[%s] Ingesting %s...' % (count, fname)
 
                     if count == MAX_IMAGES_TO_INGEST_PER_RUN:
                         print 'Stopping after ingesting %s images.' % count
