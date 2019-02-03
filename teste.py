@@ -2,7 +2,8 @@ import json
 import os
 from pprint import pprint
 from google.cloud import storage
-sys.path.append(os.path.abspath('../gee/gee_toolbox'))
+import sys
+sys.path.append(os.path.abspath('./gee_toolbox'))
 import gee as gee_toolbox
 
 # The location of the input data in Google Cloud Storage.
@@ -37,10 +38,10 @@ def getTiles(jsonFile, account=1):
     return tiles
 
 
-bucket = storage.Client().get_bucket(GCS_BUCKET)
-blobs = bucket.list_blobs(prefix=GCS_PREFIX)
+# bucket = storage.Client().get_bucket(GCS_BUCKET)
+# blobs = bucket.list_blobs(prefix=GCS_PREFIX)
 
-tiles = getTiles(jsonFile, account=account)
+# tiles = getTiles(jsonFile, account=account)
 
 # count = 1
 # for blob in blobs:
@@ -52,5 +53,5 @@ tiles = getTiles(jsonFile, account=account)
 #     if tile in tiles:
 #         print directory
 #         print filename
-for i in range(len(ACCOUNTS)):
+for i in range(0, len(ACCOUNTS)):
     print i+1, ACCOUNTS[i]

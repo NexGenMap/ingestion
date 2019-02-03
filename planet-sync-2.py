@@ -38,7 +38,7 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
-JSONFILE = 'grids.geojson'
+JSONFILE = 'grids-1.geojson'
 
 ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
@@ -93,7 +93,7 @@ def getTiles(jsonFile, account=1):
         lambda feature: feature['properties']['account'] == account, features)
 
     tiles = map(
-        lambda feature: str(feature['properties']['PageNumber']), filtered)
+        lambda feature: str(feature['properties']['id']), filtered)
 
     return tiles
 
@@ -191,7 +191,7 @@ def BuildIngestManifest(asset_id, xml_blob, path, tile):
     }
 
 
-def ScanAndIngest(tiles):
+def ScanAndIngest(tiles, account):
     """Scans for and ingests all available images."""
     print 'Scanning for existing assets...'
 
@@ -230,7 +230,7 @@ def ScanAndIngest(tiles):
                     task = ee.data.startIngestion(
                         ee.data.newTaskId()[0], manifest)
 
-                    print '[%s] Ingesting %s...' % (count, fname)
+                    print '[%s] %s Ingesting %s...' % (count, account, fname)
 
                     if count == MAX_IMAGES_TO_INGEST_PER_RUN:
                         print 'Stopping after ingesting %s images.' % count
@@ -246,7 +246,7 @@ if __name__ == '__main__':
 
         gee_toolbox.init()
 
-        for i in range(len(ACCOUNTS)):
+        for i in range(0, len(ACCOUNTS)):
 
             gee_toolbox.switch_user(ACCOUNTS[i])
             gee_toolbox.init()
@@ -257,7 +257,7 @@ if __name__ == '__main__':
 
             tiles = getTiles(jsonFileName, i+1)
 
-            ScanAndIngest(tiles)
+            ScanAndIngest(tiles, ACCOUNTS[i])
 
         print "Nap time! I'll be back in 1 hour. See you!"
         time.sleep(3600)
