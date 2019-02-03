@@ -240,6 +240,7 @@ if __name__ == '__main__':
     print 'Initializing...'
     # ee.Initialize(GoogleCredentials.get_application_default(),
     #               use_cloud_api=True)
+    gee_toolbox.init()
     
     for i in range(len(ACCOUNTS)):
         
