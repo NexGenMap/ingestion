@@ -255,6 +255,8 @@ if __name__ == '__main__':
             time.sleep(2)
 
             ee.Initialize(credentials='persistent', use_cloud_api=True)
+            
+            image = ee.Image(0)
 
             jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
