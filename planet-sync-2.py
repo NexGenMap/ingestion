@@ -250,11 +250,11 @@ if __name__ == '__main__':
         for i in range(0, len(ACCOUNTS)):
 
             gee_toolbox.switch_user(ACCOUNTS[i])
-            # gee_toolbox.init()
+            gee_toolbox.init()
             
             time.sleep(2)
 
-            ee.Initialize(use_cloud_api=True)
+            # ee.Initialize(use_cloud_api=True)
 
             jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
