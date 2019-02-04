@@ -40,8 +40,8 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-1.geojson'
 
-ACCOUNTS = ['mapbiomas3', 'mapbiomas10',
-            'mapbiomas2', 'mapbiomas4',
+ACCOUNTS = ['mapbiomas2', 'mapbiomas10',
+            'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
             'mapbiomas7', 'mapbiomas8',
             'mapbiomas9', 'mapbiomas']
@@ -250,11 +250,11 @@ if __name__ == '__main__':
         for i in range(0, len(ACCOUNTS)):
 
             gee_toolbox.switch_user(ACCOUNTS[i])
-            gee_toolbox.init()
-            
+            # gee_toolbox.init()
+
             time.sleep(2)
 
-            # ee.Initialize(use_cloud_api=True)
+            ee.Initialize(credentials='persistent', use_cloud_api=True)
 
             jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
