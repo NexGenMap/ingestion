@@ -44,7 +44,7 @@ ACCOUNTS = ['mapbiomas2', 'mapbiomas10',
             'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
             'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas']
+            'mapbiomas9', 'mapbiomas1']
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -256,13 +256,13 @@ if __name__ == '__main__':
 
             ee.Initialize(credentials='persistent', use_cloud_api=True)
             
-            image = ee.Image(0)
-
             jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
             tiles = getTiles(jsonFileName, i+1)
 
             ScanAndIngest(tiles, ACCOUNTS[i])
 
+            ee.Reset()
+
         print "Nap time! I'll be back in 1 hour. See you!"
-        time.sleep(60)
+        time.sleep(1200)
