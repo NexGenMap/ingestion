@@ -40,11 +40,17 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-1.geojson'
 
-ACCOUNTS = ['mapbiomas2', 'mapbiomas10',
-            'mapbiomas3', 'mapbiomas4',
-            'mapbiomas5', 'mapbiomas6',
-            'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas1']
+ACCOUNTS = [
+        'mapbiomas9',
+        'mapbiomas10',
+        'mapbiomas3',
+        'mapbiomas4',
+        'mapbiomas5',
+        'mapbiomas6',
+        'mapbiomas7',
+        'mapbiomas8',
+        'mapbiomas1',
+        'mapbiomas2']
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -265,4 +271,4 @@ if __name__ == '__main__':
             ee.Reset()
 
         print "Nap time! I'll be back in 1 hour. See you!"
-        time.sleep(1200)
+        time.sleep(300)
