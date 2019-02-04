@@ -245,7 +245,7 @@ if __name__ == '__main__':
     while True:
         print 'Initializing...'
 
-        gee_toolbox.init()
+        # gee_toolbox.init()
 
         for i in range(0, len(ACCOUNTS)):
 
