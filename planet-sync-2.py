@@ -207,61 +207,58 @@ def ScanAndIngest(tiles, account):
     print 'Scanning for available assets...'
 
     bucket = storage.Client().get_bucket(GCS_BUCKET)
-    blobs = bucket.list_blobs(prefix=GCS_PREFIX)
 
-    count = 1
-    for blob in blobs:
+    for tile in tiles:
 
-        directory, filename = os.path.split(blob.name)
+        blobs = bucket.list_blobs(prefix=GCS_PREFIX + tile)
 
-        if GCS_IGNORE and filename in GCS_IGNORE:
-            continue
+        count = 1
+        for blob in blobs:
 
-        _, file_extension = os.path.splitext(blob.name)
+            directory, filename = os.path.split(blob.name)
 
-        fname, _ = os.path.splitext(filename)
+            if GCS_IGNORE and filename in GCS_IGNORE:
+                continue
 
-        tile = directory.split('/')[1]
+            _, file_extension = os.path.splitext(blob.name)
 
-        if tile + '_' + fname in existing_asset_ids:
-            print 'Skipping %s: already ingested' % (tile + '_' + fname)
-            continue
+            fname, _ = os.path.splitext(filename)
 
-        if file_extension == XML_EXT:
-            if tile in tiles:
-                try:
-                    manifest = BuildIngestManifest(
-                        fname, blob, directory, tile)
+            if tile + '_' + fname in existing_asset_ids:
+                print 'Skipping %s: already ingested' % (tile + '_' + fname)
+                continue
 
-                    task = ee.data.startIngestion(
-                        ee.data.newTaskId()[0], manifest)
+            if file_extension == XML_EXT:
+                if tile in tiles:
+                    try:
+                        manifest = BuildIngestManifest(
+                            fname, blob, directory, tile)
 
-                    print '[%s] %s ingesting %s...' % (count, account, fname)
-                    print task
+                        task = ee.data.startIngestion(
+                            ee.data.newTaskId()[0], manifest)
 
-                    if count == MAX_IMAGES_TO_INGEST_PER_RUN:
-                        print 'Stopping after ingesting %s images.' % count
-                        break
-                    count = count + 1
-                except Exception as e:
-                    print 'error!', e
+                        print '[%s] %s ingesting %s...' % (count, account, fname)
+
+                        if count == MAX_IMAGES_TO_INGEST_PER_RUN:
+                            print 'Stopping after ingesting %s images.' % count
+                            break
+                        count = count + 1
+                    except Exception as e:
+                        print 'error!', e
 
 
 if __name__ == '__main__':
     while True:
         print 'Initializing...'
 
-        # gee_toolbox.init()
-
         for i in range(0, len(ACCOUNTS)):
 
             gee_toolbox.switch_user(ACCOUNTS[i])
-            # gee_toolbox.init()
 
             time.sleep(2)
 
             ee.Initialize(credentials='persistent', use_cloud_api=True)
-            
+
             jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
             tiles = getTiles(jsonFileName, i+1)
