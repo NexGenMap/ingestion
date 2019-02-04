@@ -40,11 +40,11 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-1.geojson'
 
-ACCOUNTS = ['mapbiomas2', 'mapbiomas10',
+ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
             'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas1']
+            'mapbiomas9', 'mapbiomas10']
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -81,7 +81,7 @@ METADATA_SPECS = [
 XML_METADATA_TIME_SPEC = './/ps:acquisitionDateTime'
 
 
-def getTiles(jsonFile, account=1):
+def getTiles(jsonFile):
     """Get tiles by account"""
 
     with open(jsonFile) as f:
@@ -89,11 +89,11 @@ def getTiles(jsonFile, account=1):
 
     features = jsonData['features']
 
-    filtered = filter(
-        lambda feature: feature['properties']['account'] == account, features)
-
     tiles = map(
-        lambda feature: str(feature['properties']['id']), filtered)
+        lambda feature: {
+            'id': str(feature['properties']['id']),
+            'account': int(feature['properties']['account'])
+        }, features)
 
     return tiles
 
@@ -191,7 +191,7 @@ def BuildIngestManifest(asset_id, xml_blob, path, tile):
     }
 
 
-def ScanAndIngest(tiles, account):
+def ScanAndIngest(tiles):
     """Scans for and ingests all available images."""
     print 'Scanning for existing assets...'
 
@@ -203,8 +203,16 @@ def ScanAndIngest(tiles, account):
     bucket = storage.Client().get_bucket(GCS_BUCKET)
 
     for tile in tiles:
+        
+        gee_toolbox.switch_user(ACCOUNTS[tile['account']-1])
 
-        blobs = bucket.list_blobs(prefix=GCS_PREFIX + tile)
+        try:
+            ee.Initialize(credentials='persistent', use_cloud_api=True)
+        except:
+            print 'Initialize error'
+            continue
+
+        blobs = bucket.list_blobs(prefix=GCS_PREFIX + tile['id'])
 
         count = 1
         for blob in blobs:
@@ -218,48 +226,45 @@ def ScanAndIngest(tiles, account):
 
             fname, _ = os.path.splitext(filename)
 
-            if tile + '_' + fname in existing_asset_ids:
-                print 'Skipping %s: already ingested' % (tile + '_' + fname)
+            if tile['id'] + '_' + fname in existing_asset_ids:
+                print 'Skipping %s: already ingested' % (
+                    tile['id'] + '_' + fname)
                 continue
 
             if file_extension == XML_EXT:
-                if tile in tiles:
-                    try:
-                        manifest = BuildIngestManifest(
-                            fname, blob, directory, tile)
+                try:
+                    manifest = BuildIngestManifest(
+                        fname, blob, directory, tile['id'])
 
-                        task = ee.data.startIngestion(
-                            ee.data.newTaskId()[0], manifest)
+                    task = ee.data.startIngestion(
+                        ee.data.newTaskId()[0], manifest)
 
-                        print '[%s] %s ingesting %s...' % (count, account, fname)
+                    print '[%s] %s ingesting %s...' % (
+                        count, ACCOUNTS[tile['account']-1], fname)
 
-                        if count == MAX_IMAGES_TO_INGEST_PER_RUN:
-                            print 'Stopping after ingesting %s images.' % count
-                            break
-                        count = count + 1
-                    except Exception as e:
-                        print 'error!', e
+                    if count == MAX_IMAGES_TO_INGEST_PER_RUN:
+                        print 'Stopping after ingesting %s images.' % count
+                        break
+                    count = count + 1
+                except Exception as e:
+                    print 'error!', e
+
+        ee.Reset()
 
 
 if __name__ == '__main__':
     while True:
         print 'Initializing...'
 
-        for i in range(0, len(ACCOUNTS)):
+        ee.Initialize(credentials='persistent', use_cloud_api=True)
 
-            gee_toolbox.switch_user(ACCOUNTS[i])
+        jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
-            time.sleep(2)
+        tiles = getTiles(jsonFileName)
 
-            ee.Initialize(credentials='persistent', use_cloud_api=True)
+        ScanAndIngest(tiles)
 
-            jsonFileName = os.path.join(os.getcwd(), JSONFILE)
-
-            tiles = getTiles(jsonFileName, i+1)
-
-            ScanAndIngest(tiles, ACCOUNTS[i])
-
-            ee.Reset()
+        ee.Reset()
 
         print "Nap time! I'll be back in 1 hour. See you!"
         time.sleep(1200)
