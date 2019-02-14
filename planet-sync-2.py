@@ -38,7 +38,7 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
-JSONFILE = 'grids-1.geojson'
+JSONFILE = 'grids-ma.geojson'
 
 ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
