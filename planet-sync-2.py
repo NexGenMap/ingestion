@@ -267,4 +267,4 @@ if __name__ == '__main__':
         ee.Reset()
 
         print "Nap time! I'll be back in 1 hour. See you!"
-        time.sleep(1200)
+        time.sleep(300)
