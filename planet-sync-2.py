@@ -38,7 +38,7 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
-JSONFILE = 'grids-ma.geojson'
+JSONFILE = 'grids-pam.geojson'
 
 ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
@@ -254,7 +254,7 @@ def ScanAndIngest(tiles):
 
 if __name__ == '__main__':
     while True:
-        print 'Initializing...'
+        print('Initializing...')
 
         ee.Initialize(credentials='persistent', use_cloud_api=True)
 
@@ -266,5 +266,5 @@ if __name__ == '__main__':
 
         ee.Reset()
 
-        print "Nap time! I'll be back in 1 hour. See you!"
+        print("Nap time! I'll be back in 1 hour. See you!")
         time.sleep(300)

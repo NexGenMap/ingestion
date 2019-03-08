@@ -1,0 +1,33 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4674" } },
+                                                                                
+"features": [
+{ "type": "Feature", "properties": { "id": 348593, "account": 1 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 348805, "account": 2 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 349585, "account": 3 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 349602, "account": 4 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 349730, "account": 5 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 350005, "account": 6 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 350128, "account": 7 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 350141, "account": 8 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 350223, "account": 9 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 350357, "account": 10 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 350633, "account": 1 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 351287, "account": 2 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 351288, "account": 3 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 351714, "account": 4 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 351799, "account": 5 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352167, "account": 6 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352168, "account": 7 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352576, "account": 8 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352577, "account": 9 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352635, "account": 10 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352659, "account": 1 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 352872, "account": 2 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 353049, "account": 3 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 353084, "account": 4 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 353206, "account": 5 }, "geometry": null },
+
+]
+}
