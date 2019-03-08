@@ -27,7 +27,7 @@
 { "type": "Feature", "properties": { "id": 352872, "account": 2 }, "geometry": null },
 { "type": "Feature", "properties": { "id": 353049, "account": 3 }, "geometry": null },
 { "type": "Feature", "properties": { "id": 353084, "account": 4 }, "geometry": null },
-{ "type": "Feature", "properties": { "id": 353206, "account": 5 }, "geometry": null },
+{ "type": "Feature", "properties": { "id": 353206, "account": 5 }, "geometry": null }
 
 ]
 }
