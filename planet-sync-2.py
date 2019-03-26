@@ -38,9 +38,10 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
-JSONFILE = 'grids-pam.geojson'
+JSONFILE = 'grids-amazonia-protege.json'
 
-ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
+ACCOUNTS = ['mapbiomas'
+            'mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
             'mapbiomas7', 'mapbiomas8',
@@ -81,19 +82,33 @@ METADATA_SPECS = [
 XML_METADATA_TIME_SPEC = './/ps:acquisitionDateTime'
 
 
+# def getTiles(jsonFile):
+#     """Get tiles by account"""
+
+#     with open(jsonFile) as f:
+#         jsonData = json.load(f)
+
+#     features = jsonData['features']
+
+#     tiles = map(
+#         lambda feature: {
+#             'id': str(feature['properties']['id']),
+#             'account': int(feature['properties']['account'])
+#         }, features)
+
+#     return tiles
+
 def getTiles(jsonFile):
     """Get tiles by account"""
 
     with open(jsonFile) as f:
         jsonData = json.load(f)
 
-    features = jsonData['features']
-
     tiles = map(
         lambda feature: {
-            'id': str(feature['properties']['id']),
-            'account': int(feature['properties']['account'])
-        }, features)
+            'id': str(feature['id']),
+            'account': int(feature['account'])
+        }, jsonData)
 
     return tiles
 
@@ -203,7 +218,7 @@ def ScanAndIngest(tiles):
     bucket = storage.Client().get_bucket(GCS_BUCKET)
 
     for tile in tiles:
-        
+
         gee_toolbox.switch_user(ACCOUNTS[tile['account']-1])
 
         try:
