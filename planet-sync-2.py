@@ -38,7 +38,7 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
-JSONFILE = 'grids-amazonia-protege.json'
+JSONFILE = 'grids-2.json'
 
 ACCOUNTS = ['mapbiomas'
             'mapbiomas1', 'mapbiomas2',
