@@ -29,7 +29,7 @@ EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 EE_RESOURCE_NAME_PREFIX = 'projects/earthengine-legacy/assets'
 
 # The maximum number of images to try to ingest per run.
-MAX_IMAGES_TO_INGEST_PER_RUN = 500
+MAX_IMAGES_TO_INGEST_PER_RUN = 50000
 
 # The names to use for the ingested bands in Earth Engine.
 BAND_NAMES = ['B', 'G', 'R', 'N']
@@ -40,7 +40,7 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-2.json'
 
-ACCOUNTS = ['mapbiomas'
+ACCOUNTS = ['joao',
             'mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',
@@ -127,7 +127,7 @@ def TimestampToSeconds(iso_time_string):
     return calendar.timegm(timestamp)
 
 
-def GetExistingAssetIds(collection_id, batch_size=10000):
+def GetExistingAssetIds(collection_id, batch_size=50000):
     """Returns a list of existing asset IDs in an ImageCollection."""
     collection = ee.ImageCollection(collection_id)
     results = []
@@ -242,8 +242,8 @@ def ScanAndIngest(tiles):
             fname, _ = os.path.splitext(filename)
 
             if tile['id'] + '_' + fname in existing_asset_ids:
-                print 'Skipping %s: already ingested' % (
-                    tile['id'] + '_' + fname)
+               # print 'Skipping %s: already ingested' % (
+               #     tile['id'] + '_' + fname)
                 continue
 
             if file_extension == XML_EXT:
@@ -263,6 +263,7 @@ def ScanAndIngest(tiles):
                     count = count + 1
                 except Exception as e:
                     print 'error!', e
+                    pass
 
         ee.Reset()
 
