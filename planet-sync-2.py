@@ -29,7 +29,7 @@ EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 EE_RESOURCE_NAME_PREFIX = 'projects/earthengine-legacy/assets'
 
 # The maximum number of images to try to ingest per run.
-MAX_IMAGES_TO_INGEST_PER_RUN = 5000
+MAX_IMAGES_TO_INGEST_PER_RUN = 50000
 
 # The names to use for the ingested bands in Earth Engine.
 BAND_NAMES = ['B', 'G', 'R', 'N']
@@ -40,7 +40,7 @@ XML_EXT = '.xml'
 
 JSONFILE = 'grids-2.json'
 
-ACCOUNTS = ['mapbiomas'
+ACCOUNTS = ['joao',
             'mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
             'mapbiomas5', 'mapbiomas6',

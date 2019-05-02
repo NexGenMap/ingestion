@@ -15,11 +15,7 @@ account = 1
 
 jsonFile = os.path.join(os.getcwd(), 'grids.geojson')
 
-ACCOUNTS = ['mapbiomas1', 'mapbiomas2',
-            'mapbiomas3', 'mapbiomas4',
-            'mapbiomas5', 'mapbiomas6',
-            'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas10']
+ACCOUNTS = ['joao']
 
 
 def getTiles(jsonFile, account=1):
@@ -38,12 +34,18 @@ def getTiles(jsonFile, account=1):
     return tiles
 
 
-# bucket = storage.Client().get_bucket(GCS_BUCKET)
+bucket = storage.Client().get_bucket(GCS_BUCKET)
 # blobs = bucket.list_blobs(prefix=GCS_PREFIX)
 
 # tiles = getTiles(jsonFile, account=account)
-
+blob = storage.Blob(
+    'tiles/75004/20190326_124419_1034/20190326_124419_1034.xml',
+    bucket=bucket)
 # count = 1
+
+print(blob.download_as_string())
+# print(blob.name)
+
 # for blob in blobs:
 
 #     directory, filename = os.path.split(blob.name)
@@ -53,5 +55,5 @@ def getTiles(jsonFile, account=1):
 #     if tile in tiles:
 #         print directory
 #         print filename
-for i in range(0, len(ACCOUNTS)):
-    print i+1, ACCOUNTS[i]
+# for i in range(0, len(ACCOUNTS)):
+#     print i+1, ACCOUNTS[i]
