@@ -65,14 +65,16 @@ if __name__ == '__main__':
     while True:
         print('Initializing...')
 
-        ee.Initialize(credentials='persistent', use_cloud_api=True)
-
         jsonFiles = glob.glob('{}/*.json'.format(JSON_PATH))
 
         assetids = []  # GetExistingAssetIds(EE_COLLECTION)
 
         count = 1
         account = random.choice(ACCOUNTS)
+        gee_toolbox.switch_user(account)
+
+        ee.Initialize(credentials='persistent', use_cloud_api=True)
+
         for jsonFile in jsonFiles:
 
             imageName = os.path.splitext(os.path.basename(jsonFile))[0]
