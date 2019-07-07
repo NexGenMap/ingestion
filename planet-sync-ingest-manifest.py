@@ -51,18 +51,14 @@ def GetExistingAssetIds(collection_id, batch_size=10000):
             page_token = batch[-1]
 
 
-def Ingest(manifestJson):
+def Ingest(manifest):
 
     try:
-        with open(manifestJson) as json_file:
-            manifest = json.load(json_file)
-
         task = ee.data.startIngestion(
             ee.data.newTaskId()[0], manifest)
 
     except Exception as e:
         print 'error!', e
-        print manifestJson
 
 
 if __name__ == '__main__':
@@ -75,33 +71,39 @@ if __name__ == '__main__':
 
         assetids = []  # GetExistingAssetIds(EE_COLLECTION)
 
+        jsonFiles = filter(
+            lambda jsonFiles:
+                os.path.splitext(os.path.basename(jsonFile))[0] not in assetids
+        )
+
         count = 1
         account = random.choice(ACCOUNTS)
+        
         for jsonFile in jsonFiles:
 
-            imageName = os.path.splitext(os.path.basename(jsonFile))[0]
+            with open(jsonFile) as json_file:
+                manifest = json.load(json_file)
 
-            if imageName not in assetids:
-                print('[{}] {} {}'.format(account, count, jsonFile))
+            print('[{}] {} {}'.format(account, count, jsonFile))
 
-                Ingest(jsonFile)
+            Ingest(manifest)
 
-                if count > 500:
-                    ee.Reset()
+            if count > 500:
+                ee.Reset()
 
-                    account = random.choice(ACCOUNTS)
+                account = random.choice(ACCOUNTS)
 
-                    gee_toolbox.switch_user(account)
+                gee_toolbox.switch_user(account)
 
-                    try:
-                        ee.Initialize(credentials='persistent',
-                                      use_cloud_api=True)
-                    except:
-                        print 'Initialize error'
+                try:
+                    ee.Initialize(credentials='persistent',
+                                  use_cloud_api=True)
+                except:
+                    print 'Initialize error'
 
-                    count = 1
-                else:
-                    count = count + 1
+                count = 1
+            else:
+                count = count + 1
 
         print("Nap time! I'll be back in 1 hour. See you!")
         time.sleep(300)
