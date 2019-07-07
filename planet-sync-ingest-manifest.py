@@ -20,7 +20,7 @@ import random
 # The Earth Engine image collection to write to.
 EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 
-JSON_PATH = '/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019/pack-4'
+JSON_PATH = '/var/www/manifest'
 
 ACCOUNTS = ['joao',
             'mapbiomas1', 'mapbiomas2',
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
         jsonFiles = glob.glob('{}/*.json'.format(JSON_PATH))
 
-        assetids = []#GetExistingAssetIds(EE_COLLECTION)
+        assetids = GetExistingAssetIds(EE_COLLECTION)
 
         count = 1
         for jsonFile in jsonFiles:
