@@ -38,14 +38,15 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
-JSONFILE = 'grids-2.json'
+JSONFILE = 'grids-2-pan-mat.json'
 
-ACCOUNTS = ['joao',
+ACCOUNTS = ['joao', 'mapbiomas'
             'mapbiomas1', 'mapbiomas2',
-            'mapbiomas3', 'mapbiomas4',
-            'mapbiomas5', 'mapbiomas6',
-            'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas10']
+            # 'mapbiomas3', 'mapbiomas4',
+            # 'mapbiomas5', 'mapbiomas6',
+            # 'mapbiomas7', 'mapbiomas8',
+            # 'mapbiomas9', 'mapbiomas10'
+            ]
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -266,7 +267,6 @@ def ScanAndIngest(tiles):
                     print fname
                     pass
 
-        ee.Reset()
 
 
 if __name__ == '__main__':

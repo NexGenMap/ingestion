@@ -4,6 +4,7 @@ from collections import defaultdict
 from cStringIO import StringIO
 import ee
 from google.cloud import storage
+from google.auth import compute_engine
 from oauth2client.client import GoogleCredentials
 import os
 import time
@@ -14,7 +15,7 @@ import sys
 sys.path.append(os.path.abspath('./gee_toolbox'))
 import gee as gee_toolbox
 import time
-
+import glob
 
 # The location of the input data in Google Cloud Storage.
 GCS_BUCKET = 'sistema_alertas_sccon'
@@ -35,9 +36,11 @@ BAND_NAMES = ['B', 'G', 'R', 'N']
 TIF_EXT = '_cut.tif'
 XML_EXT = '.xml'
 
+PACKS = ["pack-4", "pack-5", "pack-6"]
+
 # sccon json path
-JSON_PATH = "/home/joao/Documents/trabalho/mapbiomas2.0/json/input"
-JSON_OUTPUT_PATH = "/home/joao/Documents/trabalho/mapbiomas2.0/json/output"
+JSON_PATH = "/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019/input"
+JSON_OUTPUT_PATH = "/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019"
 
 # The XML namespaces from which we will be extracting metadata.
 XML_NAMESPACES = {
@@ -84,7 +87,7 @@ def getJsonNames(path):
 
 def getUniquePaths(json):
 
-    uris = []
+    paths = []
 
     for tile in json['tiles']:
 
@@ -93,13 +96,13 @@ def getUniquePaths(json):
             for scene in tile['scenes']:
 
                 if scene != []:
+                    paths.append(
+                        "tiles/{tile_id}/{scene_id}/{scene_id}_cut.tif".format(
+                            tile_id=tile['id'],
+                            scene_id=scene['id'])
+                    )
 
-                    if scene['path'].find('visual') == -1:
-
-                        uris.append(scene['path'].replace(
-                            "https://storage.googleapis.com/{}/".format(GCS_BUCKET), ""))
-
-    return uris
+    return paths
 
 
 def TimestampToSeconds(iso_time_string):
@@ -153,38 +156,61 @@ if __name__ == '__main__':
 
     ee.Initialize(credentials='persistent', use_cloud_api=True)
 
-    bucket = storage.Client().get_bucket(GCS_BUCKET)
+    service_account = "/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/credentials/mapbiomas-toolkit-31b385368b50.json"
+
+    storage_client = storage.Client.from_service_account_json(service_account)
+    bucket = storage_client.get_bucket(GCS_BUCKET)
+
+    print(bucket)
 
     # jsonNames = getJsonNames(JSON_PATH)
+    # print(jsonNames)
     jsonNames = [
-        "01-amazonia.json",
-        "01-caatinga.json",
-        "01-cerrado.json",
-        "01-mataatlantica.json",
-        "01-pampa.json", #ok
-        "01-pantanal.json", #ok
-        "02-amazonia.json",
-        "02-cerrado.json",#
+        # "mata-atlantica_pantanal.json",
+        # "amazonia-10.json"
+        # "amazonia-11.json"
+        # "amazonia-12.json"
+        # "amazonia-13.json"
+        # "amazonia-14.json"
+        # "cerrado-amazonia-20.json"
+        # "cerrado-amazonia-21.json"
+        # "cerrado-amazonia-22.json"
+        # "cerrado-amazonia-23.json"
+        "cerrado-amazonia-24.json"
+        # "caatinga.json", # ok
+        # "pampa.json", #ok
     ]
 
-    for jsonName in jsonNames:
-        with open(os.path.join(JSON_PATH, jsonName)) as json_file:
-            data = json.load(json_file)
+    manifests = []
+    for pack in PACKS:
+        manifests.extend(
+            glob.glob('{}/{}/*.json'.format(JSON_OUTPUT_PATH, pack)))
 
-        paths = getUniquePaths(data)
+    for jsonName in jsonNames:
+        try:
+            with open(os.path.join(JSON_PATH, jsonName)) as json_file:
+                data = json.load(json_file)
+
+            paths = getUniquePaths(data)
+        except:
+            paths = []
 
         for path in paths:
 
             _, tile, asset_id, _ = path.split('/')
-            outname = "{}/{}.json".format(JSON_OUTPUT_PATH, asset_id)
-
-            if not os.path.isfile(outname):
-                print(path)
+            outname = "{}/{}/{}_{}.json".format(
+                JSON_OUTPUT_PATH, PACKS[-1], tile, asset_id)
+            
+            # if not os.path.isfile(outname):
+            if not outname in manifests:
+                print(jsonNames, path)
                 try:
                     manifest = BuildIngestManifest(
                         path, bucket, tile, asset_id)
 
                     with open(outname, 'w') as outfile:
                         json.dump(manifest, outfile)
-                except:
-                    print('error')
+                except Exception as e:
+                    print(e)
+            else:
+                print('manisfest alredy exist...')
