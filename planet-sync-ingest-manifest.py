@@ -72,8 +72,9 @@ if __name__ == '__main__':
         assetids = GetExistingAssetIds(EE_COLLECTION)
 
         jsonFiles = filter(
-            lambda jsonFiles:
-                os.path.splitext(os.path.basename(jsonFile))[0] not in assetids
+            lambda jsonFile:
+                os.path.splitext(os.path.basename(jsonFile))[0] not in assetids,
+                jsonFiles
         )
 
         count = 1
