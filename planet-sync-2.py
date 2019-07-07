@@ -263,6 +263,7 @@ def ScanAndIngest(tiles):
                     count = count + 1
                 except Exception as e:
                     print 'error!', e
+                    print fname
                     pass
 
         ee.Reset()
