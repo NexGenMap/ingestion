@@ -83,19 +83,22 @@ if __name__ == '__main__':
         assetids = []#GetExistingAssetIds(EE_COLLECTION)
 
         count = 1
+        account = random.choice(ACCOUNTS)
         for jsonFile in jsonFiles:
 
             imageName = os.path.splitext(os.path.basename(jsonFile))[0]
 
             if imageName not in assetids:
-                account = random.choice(ACCOUNTS)
                 print('[{}] {} {}'.format(account, count, jsonFile))
 
                 Ingest(jsonFile, account)
 
-                ee.Reset()
-
-                count = count + 1
+                if count > 500:
+                    account = random.choice(ACCOUNTS)
+                    ee.Reset()
+                    count = 1
+                else:
+                    count = count + 1
 
         print("Nap time! I'll be back in 1 hour. See you!")
         time.sleep(300)
