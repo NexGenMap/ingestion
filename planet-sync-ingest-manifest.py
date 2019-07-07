@@ -51,14 +51,7 @@ def GetExistingAssetIds(collection_id, batch_size=10000):
             page_token = batch[-1]
 
 
-def Ingest(manifestJson, account):
-
-    gee_toolbox.switch_user(account)
-
-    try:
-        ee.Initialize(credentials='persistent', use_cloud_api=True)
-    except:
-        print 'Initialize error'
+def Ingest(manifestJson):
 
     try:
         with open(manifestJson) as json_file:
@@ -80,7 +73,7 @@ if __name__ == '__main__':
 
         jsonFiles = glob.glob('{}/*.json'.format(JSON_PATH))
 
-        assetids = []#GetExistingAssetIds(EE_COLLECTION)
+        assetids = []  # GetExistingAssetIds(EE_COLLECTION)
 
         count = 1
         account = random.choice(ACCOUNTS)
@@ -91,11 +84,21 @@ if __name__ == '__main__':
             if imageName not in assetids:
                 print('[{}] {} {}'.format(account, count, jsonFile))
 
-                Ingest(jsonFile, account)
+                Ingest(jsonFile)
 
                 if count > 500:
-                    account = random.choice(ACCOUNTS)
                     ee.Reset()
+
+                    account = random.choice(ACCOUNTS)
+
+                    gee_toolbox.switch_user(account)
+
+                    try:
+                        ee.Initialize(credentials='persistent',
+                                      use_cloud_api=True)
+                    except:
+                        print 'Initialize error'
+
                     count = 1
                 else:
                     count = count + 1
