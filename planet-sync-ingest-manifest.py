@@ -84,10 +84,14 @@ if __name__ == '__main__':
             if imageName not in assetids:
                 print('[{}] {} {}'.format(account, count, jsonFile))
 
-                with open(jsonFile) as json_file:
-                    manifest = json.load(json_file)
+                try:
+                    with open(jsonFile) as json_file:
+                        manifest = json.load(json_file)
 
-                Ingest(manifest)
+                    Ingest(manifest)
+                except Exception as e:
+                    print(e)
+                    continue
 
                 if count > 500:
                     ee.Reset()
@@ -101,6 +105,7 @@ if __name__ == '__main__':
                                       use_cloud_api=True)
                     except:
                         print 'Initialize error'
+                        continue
 
                     count = 1
                 else:
