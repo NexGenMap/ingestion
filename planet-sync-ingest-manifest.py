@@ -22,12 +22,12 @@ EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 
 JSON_PATH = '/var/www/manifest'
 
-ACCOUNTS = ['joao',
+ACCOUNTS = [
             'mapbiomas1', 'mapbiomas2',
             'mapbiomas3', 'mapbiomas4',
-            # 'mapbiomas5', 'mapbiomas6',
-            # 'mapbiomas7', 'mapbiomas8',
-            # 'mapbiomas9', 'mapbiomas10'
+            'mapbiomas5', 'mapbiomas6',
+            'mapbiomas7', 'mapbiomas8',
+            'mapbiomas9', 'mapbiomas10'
             ]
 
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
         jsonFiles = glob.glob('{}/*.json'.format(JSON_PATH))
      
-        print('{} manifests found.'.fomrat(len(jsonFiles)))
+        print('{} manifests found.'.format(len(jsonFiles)))
         
         count = 1
         account = random.choice(ACCOUNTS)
