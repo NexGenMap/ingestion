@@ -171,12 +171,12 @@ if __name__ == '__main__':
         # "amazonia-11.json"
         # "amazonia-12.json"
         # "amazonia-13.json"
-        # "amazonia-14.json"
+        "amazonia-14.json"
         # "cerrado-amazonia-20.json"
         # "cerrado-amazonia-21.json"
         # "cerrado-amazonia-22.json"
         # "cerrado-amazonia-23.json"
-        "cerrado-amazonia-24.json"
+        # "cerrado-amazonia-24.json"
         # "caatinga.json", # ok
         # "pampa.json", #ok
     ]
@@ -185,6 +185,8 @@ if __name__ == '__main__':
     for pack in PACKS:
         manifests.extend(
             glob.glob('{}/{}/*.json'.format(JSON_OUTPUT_PATH, pack)))
+
+    manifests = map(lambda name: os.path.basename(name), manifests)
 
     for jsonName in jsonNames:
         try:
@@ -198,12 +200,15 @@ if __name__ == '__main__':
         for path in paths:
 
             _, tile, asset_id, _ = path.split('/')
-            outname = "{}/{}/{}_{}.json".format(
-                JSON_OUTPUT_PATH, PACKS[-1], tile, asset_id)
-            
+
+            basename = "{}_{}.json".format(tile, asset_id)
+
+            outname = "{}/{}/{}".format(
+                JSON_OUTPUT_PATH, PACKS[-1], basename)
+
             # if not os.path.isfile(outname):
-            if not outname in manifests:
-                print(jsonNames, path)
+            if not basename in manifests:
+                print(jsonName, path)
                 try:
                     manifest = BuildIngestManifest(
                         path, bucket, tile, asset_id)
@@ -213,4 +218,4 @@ if __name__ == '__main__':
                 except Exception as e:
                     print(e)
             else:
-                print('manisfest alredy exist...')
+                print(basename, 'manisfest alredy exist...')

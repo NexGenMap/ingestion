@@ -20,11 +20,12 @@ import random
 # The Earth Engine image collection to write to.
 EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 
-JSON_PATH = '/var/www/manifest'
+JSON_PATH = '/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019/pack-5'
+# JSON_PATH = '/var/www/manifest'
 
 ACCOUNTS = ['joao',
-            'mapbiomas1', 'mapbiomas2',
-            'mapbiomas3', 'mapbiomas4',
+            # 'mapbiomas1', 'mapbiomas2',
+            # 'mapbiomas3', 'mapbiomas4',
             # 'mapbiomas5', 'mapbiomas6',
             # 'mapbiomas7', 'mapbiomas8',
             # 'mapbiomas9', 'mapbiomas10'
@@ -67,7 +68,7 @@ if __name__ == '__main__':
 
         jsonFiles = glob.glob('{}/*.json'.format(JSON_PATH))
      
-        print('{} manifests found.'.fomrat(len(jsonFiles)))
+        print('{} manifests found.'.format(len(jsonFiles)))
         
         count = 1
         account = random.choice(ACCOUNTS)
@@ -75,7 +76,7 @@ if __name__ == '__main__':
 
         ee.Initialize(credentials='persistent', use_cloud_api=True)
 
-        assetids = GetExistingAssetIds(EE_COLLECTION)
+        assetids = []#GetExistingAssetIds(EE_COLLECTION)
 
         for jsonFile in jsonFiles:
 
@@ -101,8 +102,7 @@ if __name__ == '__main__':
                     gee_toolbox.switch_user(account)
 
                     try:
-                        ee.Initialize(credentials='persistent',
-                                      use_cloud_api=True)
+                        ee.Initialize(credentials='persistent', use_cloud_api=True)
                     except:
                         print 'Initialize error'
                         continue
