@@ -23,11 +23,12 @@ EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 JSON_PATH = '/var/www/manifest'
 
 ACCOUNTS = [
-            'mapbiomas1', 'mapbiomas2',
-            'mapbiomas3', 'mapbiomas4',
-            'mapbiomas5', 'mapbiomas6',
-            'mapbiomas7', 'mapbiomas8',
-            'mapbiomas9', 'mapbiomas10'
+            'joao'
+            #'mapbiomas1', 'mapbiomas2',
+            #'mapbiomas3', 'mapbiomas4',
+            #'mapbiomas5', 'mapbiomas6',
+            #'mapbiomas7', 'mapbiomas8',
+            #'mapbiomas9', 'mapbiomas10'
             ]
 
 
