@@ -20,7 +20,7 @@ import random
 # The Earth Engine image collection to write to.
 EE_COLLECTION = 'projects/nexgenmap/MapBiomas2/PLANET/tiles'
 
-JSON_PATH = '/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019/pack-5'
+JSON_PATH = '/home/joao/Documents/trabalho/mapbiomas2.0/json/teste'
 # JSON_PATH = '/var/www/manifest'
 
 ACCOUNTS = ['joao',

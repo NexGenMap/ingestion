@@ -18,7 +18,7 @@ import time
 
 # The location of the input data in Google Cloud Storage.
 GCS_BUCKET = 'sistema_alertas_sccon'
-GCS_PREFIX = 'tiles/'
+GCS_PREFIX = 'tiles-manual/'
 GCS_IGNORE = ['init']
 
 # The Earth Engine image collection to write to.
@@ -206,65 +206,70 @@ def BuildIngestManifest(asset_id, xml_blob, path, tile):
     }
 
 
-def ScanAndIngest(tiles):
+def ScanAndIngest():
     """Scans for and ingests all available images."""
     print 'Scanning for existing assets...'
 
-    existing_asset_ids = GetExistingAssetIds(EE_COLLECTION)
+    existing_asset_ids = []#GetExistingAssetIds(EE_COLLECTION)
     print 'Found %s existing assets.' % len(existing_asset_ids)
 
     print 'Scanning for available assets...'
 
     bucket = storage.Client().get_bucket(GCS_BUCKET)
 
-    for tile in tiles:
+    # for tile in tiles:
 
-        gee_toolbox.switch_user(ACCOUNTS[tile['account']-1])
+        # gee_toolbox.switch_user(ACCOUNTS[tile['account']-1])
 
-        try:
-            ee.Initialize(credentials='persistent', use_cloud_api=True)
-        except:
-            print 'Initialize error'
+    try:
+        ee.Initialize(credentials='persistent', use_cloud_api=True)
+    except:
+        print 'Initialize error'
+
+    blobs = bucket.list_blobs(prefix=GCS_PREFIX)
+
+    count = 1
+    for blob in blobs:
+
+        directory, filename = os.path.split(blob.name)
+        print(directory, filename)
+
+        if GCS_IGNORE and filename in GCS_IGNORE:
             continue
 
-        blobs = bucket.list_blobs(prefix=GCS_PREFIX + tile['id'])
+        _, file_extension = os.path.splitext(blob.name)
+        print(file_extension)
+        fname, _ = os.path.splitext(filename)
+        split = directory.split('/')
 
-        count = 1
-        for blob in blobs:
+        # if tile['id'] + '_' + fname in existing_asset_ids:
+        #     # print 'Skipping %s: already ingested' % (
+        #     #     tile['id'] + '_' + fname)
+        #     continue
 
-            directory, filename = os.path.split(blob.name)
+        if file_extension == XML_EXT:
+            try:
+                tile = split[1]
+                
+                manifest = BuildIngestManifest(
+                    fname.split('.')[0], blob, directory, tile)
 
-            if GCS_IGNORE and filename in GCS_IGNORE:
-                continue
+                task = ee.data.startIngestion(
+                    ee.data.newTaskId()[0], manifest)
 
-            _, file_extension = os.path.splitext(blob.name)
+                task.start()
+                
+                print '[%s] %s ingesting %s...' % (
+                    count, 'joao', fname)
 
-            fname, _ = os.path.splitext(filename)
-
-            if tile['id'] + '_' + fname in existing_asset_ids:
-               # print 'Skipping %s: already ingested' % (
-               #     tile['id'] + '_' + fname)
-                continue
-
-            if file_extension == XML_EXT:
-                try:
-                    manifest = BuildIngestManifest(
-                        fname, blob, directory, tile['id'])
-
-                    task = ee.data.startIngestion(
-                        ee.data.newTaskId()[0], manifest)
-
-                    print '[%s] %s ingesting %s...' % (
-                        count, ACCOUNTS[tile['account']-1], fname)
-
-                    if count == MAX_IMAGES_TO_INGEST_PER_RUN:
-                        print 'Stopping after ingesting %s images.' % count
-                        break
-                    count = count + 1
-                except Exception as e:
-                    print 'error!', e
-                    print fname
-                    pass
+                if count == MAX_IMAGES_TO_INGEST_PER_RUN:
+                    print 'Stopping after ingesting %s images.' % count
+                    break
+                count = count + 1
+            except Exception as e:
+                print 'error!', e
+                print fname
+                pass
 
 
 
@@ -274,11 +279,11 @@ if __name__ == '__main__':
 
         ee.Initialize(credentials='persistent', use_cloud_api=True)
 
-        jsonFileName = os.path.join(os.getcwd(), JSONFILE)
+        # jsonFileName = os.path.join(os.getcwd(), JSONFILE)
 
-        tiles = getTiles(jsonFileName)
+        # tiles = getTiles(jsonFileName)
 
-        ScanAndIngest(tiles)
+        ScanAndIngest()
 
         ee.Reset()
 

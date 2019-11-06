@@ -1,0 +1,44 @@
+{
+    "bands": [{
+        "id": "B",
+        "tileset_band_index": 0
+    }, {
+        "id": "G",
+        "tileset_band_index": 1
+    }, {
+        "id": "R",
+        "tileset_band_index": 2
+    }, {
+        "id": "N",
+        "tileset_band_index": 3
+    }],
+    "properties": {
+        "orbit_direction": "DESCENDING",
+        "unusable_data_percentage": 0.0,
+        "platform_short_name": "PlanetScope",
+        "product_type": "L3B",
+        "incidence_angle": 5.38066,
+        "acquisition_type": "NOMINAL",
+        "illumination_azimuth_angle": 53.29694,
+        "scan_type": "FRAME",
+        "cloud_cover_percentage": 0.81,
+        "platform_orbit_type": "LEO-SSO",
+        "sensor_type": "OPTICAL",
+        "instrument_short_name": "PS2",
+        "illumination_elevation_angle": 55.90138,
+        "tile": "4157",
+        "platform_serial_identifier": "1006",
+        "resolution": 3.0,
+        "azimuth_angle": 11.08908,
+        "space_craft_view_angle": 4.996155
+    },
+    "start_time": {
+        "seconds": 1559397636
+    },
+    "name": "projects/earthengine-legacy/assets/projects/nexgenmap/MapBiomas2/PLANET/tiles/4157_20190601_140036_1006",
+    "tilesets": [{
+        "sources": [{
+            "uris": ["gs://sistema_alertas_sccon/tiles/4157/20190601_140036_1006/20190601_140036_1006_cut.tif"]
+        }]
+    }]
+}

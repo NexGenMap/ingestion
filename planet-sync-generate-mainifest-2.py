@@ -167,16 +167,21 @@ if __name__ == '__main__':
     # print(jsonNames)
     jsonNames = [
         # "mata-atlantica_pantanal.json",
+        # "mata-atlantica_pantanal-0.json"
+        # "mata-atlantica_pantanal-1.json"
+        "mata-atlantica_pantanal-2.json"
+        # "mata-atlantica_pantanal-3.json"
+        # "mata-atlantica_pantanal-4.json"
         # "amazonia-10.json"
         # "amazonia-11.json"
         # "amazonia-12.json"
         # "amazonia-13.json"
-        "amazonia-14.json"
-        # "cerrado-amazonia-20.json"
-        # "cerrado-amazonia-21.json"
-        # "cerrado-amazonia-22.json"
-        # "cerrado-amazonia-23.json"
-        # "cerrado-amazonia-24.json"
+        # "amazonia-14.json"
+        # "cerrado-amazonia-20.json",
+        # "cerrado-amazonia-21.json",
+        # "cerrado-amazonia-22.json",
+        # "cerrado-amazonia-23.json",
+        # "cerrado-amazonia-24.json",
         # "caatinga.json", # ok
         # "pampa.json", #ok
     ]

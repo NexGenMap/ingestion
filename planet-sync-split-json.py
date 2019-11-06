@@ -2,7 +2,7 @@
 
 import json
 
-jsonfile = "/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019/input/cerrado-amazonia-2.json"
+jsonfile = "/home/joao/Documents/trabalho/mapbiomas2.0/ingestao/04-05-06-2019/input/mata-atlantica_pantanal.json"
 
 with open(jsonfile) as json_file:
     jsondata = json.load(json_file)
