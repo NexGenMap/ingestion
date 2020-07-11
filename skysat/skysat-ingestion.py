@@ -150,14 +150,14 @@ for jsonFile in jsonFiles:
                 image = ee.Image(manifest['name']).getInfo()
                 print(f'\033[93m[Image already exists]\033[0m', preffix)
             except:
-                # try:
-                # start ingesting task
-                print(f'\033[92mIngerindo:\033[0m', preffix)
-                task = ee.data.startIngestion(
-                    ee.data.newTaskId()[0], manifest)
-                # except:
-                #     print(f'\033[91mErro ao ingerir: \033[0m', preffix)
-                #     logFile.write(name)
+                try:
+                    # start ingesting task
+                    print(f'\033[92mIngerindo:\033[0m', preffix)
+                    task = ee.data.startIngestion(
+                        ee.data.newTaskId()[0], manifest)
+                except:
+                    print(f'\033[91mErro ao ingerir: \033[0m', preffix)
+                    logFile.write(name)
         else:
             print('\033[91m[LOG]\033[0m')
             logFile.write(name)
