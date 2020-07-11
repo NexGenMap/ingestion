@@ -80,7 +80,7 @@ INFO_LIST = [
 
 def TimestampToSeconds(iso_time_string):
     
-    timestamp = time.strptime(iso_time_string, '%Y-%m-%dT%H:%M:%S.%fZ')
+    timestamp = time.strptime(iso_time_string, '%Y-%m-%dT%H:%M:%SZ')
     
     return calendar.timegm(timestamp)
 
