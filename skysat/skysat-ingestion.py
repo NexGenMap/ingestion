@@ -5,6 +5,7 @@ import csv
 import json
 import time
 import calendar
+import iso8601
 from pprint import pprint
 from google.cloud import storage
 
@@ -80,8 +81,8 @@ INFO_LIST = [
 
 def TimestampToSeconds(iso_time_string):
     
-    timestamp = time.strptime(iso_time_string, '%Y-%m-%dT%H:%M:%SZ')
-    
+    timestamp = time.strptime(iso8601.parse_date(iso_time_string).isoformat(), '%Y-%m-%dT%H:%M:%S+00:00')
+
     return calendar.timegm(timestamp)
 
 jsonFiles = open(METADATA_FILE, 'r').read().splitlines()
