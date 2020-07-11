@@ -17,11 +17,12 @@ import time
 import glob
 import random
 
-JSON_PATH = '/var/www/manifest'
+JSON_PATH = '/home/joao/Documents/trabalho/mapbiomas2.0/json/ingest'
 
 ACCOUNTS = [
-           'mapbiomas1', 'mapbiomas2',
-           'mapbiomas3', 'mapbiomas4',
+           'joao',
+        #    'mapbiomas2',
+        #    'mapbiomas3', 'mapbiomas4',
            # 'mapbiomas5', 'mapbiomas6',
            # 'mapbiomas7', 'mapbiomas8',
            # 'mapbiomas9', 'mapbiomas10'
@@ -61,58 +62,58 @@ def Ingest(manifest):
 
 
 if __name__ == '__main__':
-    while True:
-        print('Initializing...')
+    # while True:
+    print('Initializing...')
 
-        jsonFiles = glob.glob('{}/*/*.json'.format(JSON_PATH))
-     
-        print('{} manifests found.'.format(len(jsonFiles)))
+    jsonFiles = glob.glob('{}/*.json'.format(JSON_PATH))
+    
+    print('{} manifests found.'.format(len(jsonFiles)))
+    
+    count = 1
+    account = random.choice(ACCOUNTS)
+    gee_toolbox.switch_user(account)
+
+    ee.Initialize(credentials='persistent', use_cloud_api=True)
+    
+    imageList = GetExistingAssetIds('projects/nexgenmap/MapBiomas2/PLANET/images')
+
+    for jsonFile in jsonFiles:
+
+        imageName = os.path.splitext(os.path.basename(jsonFile))[0]
         
-        count = 1
-        account = random.choice(ACCOUNTS)
-        gee_toolbox.switch_user(account)
+        if imageName not in imageList:
+            print('[{}] {} {}'.format(account, count, jsonFile))
 
-        ee.Initialize(credentials='persistent', use_cloud_api=True)
-        
-        imageList = GetExistingAssetIds('projects/nexgenmap/MapBiomas2/PLANET/tiles')
+            try:
+                with open(jsonFile) as json_file:
+                    manifest = json.load(json_file)
+                    #manifest["name"] = manifest["name"].replace("tiles", "tiles-2")
 
-        for jsonFile in jsonFiles:
+                Ingest(manifest)
+            except Exception as e:
+                print(e)
+                continue
 
-            imageName = os.path.splitext(os.path.basename(jsonFile))[0]
-            
-            if imageName not in imageList:
-                print('[{}] {} {}'.format(account, count, jsonFile))
+            if count > 500:
+                ee.Reset()
+
+                account = random.choice(ACCOUNTS)
+
+                gee_toolbox.switch_user(account)
 
                 try:
-                    with open(jsonFile) as json_file:
-                        manifest = json.load(json_file)
-                        #manifest["name"] = manifest["name"].replace("tiles", "tiles-2")
-
-                    Ingest(manifest)
-                except Exception as e:
-                    print(e)
+                    ee.Initialize(credentials='persistent', use_cloud_api=True)
+                except:
+                    print 'Initialize error'
                     continue
 
-                if count > 500:
-                    ee.Reset()
-
-                    account = random.choice(ACCOUNTS)
-
-                    gee_toolbox.switch_user(account)
-
-                    try:
-                        ee.Initialize(credentials='persistent', use_cloud_api=True)
-                    except:
-                        print 'Initialize error'
-                        continue
-
-                    count = 1
-                else:
-                    count = count + 1
-
+                count = 1
             else:
-                print('removing: ', jsonFile)
-                os.remove(jsonFile)
+                count = count + 1
 
-        print("Nap time! I'll be back in 1 hour. See you!")
-        time.sleep(300)
+        else:
+            print('removing: ', jsonFile)
+            os.remove(jsonFile)
+
+    print("Nap time! I'll be back in 1 hour. See you!")
+        # time.sleep(300)

@@ -2,13 +2,13 @@
 import calendar
 from collections import defaultdict
 from cStringIO import StringIO
+import xml.etree.ElementTree as ET
 import ee
 from google.cloud import storage
 from google.auth import compute_engine
 from oauth2client.client import GoogleCredentials
 import os
 import time
-import xml.etree.ElementTree as ET
 from pprint import pprint
 import json
 import sys
