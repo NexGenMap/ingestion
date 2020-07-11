@@ -81,7 +81,7 @@ INFO_LIST = [
 
 def TimestampToSeconds(iso_time_string):
     
-    timestamp = time.strptime(iso8601.parse_date(iso_time_string).isoformat(), '%Y-%m-%dT%H:%M:%S+00:00')
+    timestamp = time.strptime(iso8601.parse_date(iso_time_string).isoformat(), '%Y-%m-%dT%H:%M:%S.%f+00:00')
 
     return calendar.timegm(timestamp)
 
